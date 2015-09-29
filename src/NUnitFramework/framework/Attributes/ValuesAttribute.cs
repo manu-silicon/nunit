@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections;
+using NUnit.Framework.Compatibility;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 

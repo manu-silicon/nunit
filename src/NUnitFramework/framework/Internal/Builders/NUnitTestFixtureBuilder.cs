@@ -24,6 +24,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using NUnit.Framework.Compatibility;
 using NUnit.Framework.Interfaces;
 
 namespace NUnit.Framework.Internal.Builders

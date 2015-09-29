@@ -24,6 +24,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using NUnit.Framework.Compatibility;
 using NUnit.Framework.Interfaces;
 
 namespace NUnit.Framework.Internal
@@ -56,13 +57,25 @@ namespace NUnit.Framework.Internal
         {
             get 
             {
-                var baseType = Type.BaseType;
+                var baseType = TypeInfo.BaseType;
 
                 return baseType != null
                     ? new TypeWrapper(baseType)
                     : null; 
             }
         }
+
+#if PORTABLE
+        private TypeInfo TypeInfo
+        {
+            get { return Type.GetTypeInfo(); }
+        }
+#else
+        private Type TypeInfo
+        {
+            get { return Type; }
+        }
+#endif
 
         /// <summary>
         /// Gets the Name of the Type
@@ -85,7 +98,7 @@ namespace NUnit.Framework.Internal
         /// </summary>
         public Assembly Assembly
         {
-            get { return Type.Assembly; }
+            get { return TypeInfo.Assembly; }
         }
 
         /// <summary>
@@ -101,7 +114,7 @@ namespace NUnit.Framework.Internal
         /// </summary>
         public bool IsAbstract
         {
-            get { return Type.IsAbstract; }
+            get { return TypeInfo.IsAbstract; }
         }
 
         /// <summary>
@@ -109,7 +122,7 @@ namespace NUnit.Framework.Internal
         /// </summary>
         public bool IsGenericType
         {
-            get { return Type.IsGenericType; }
+            get { return TypeInfo.IsGenericType; }
         }
 
         /// <summary>
@@ -125,7 +138,7 @@ namespace NUnit.Framework.Internal
         /// </summary>
         public bool ContainsGenericParameters
         {
-            get { return Type.ContainsGenericParameters; }
+            get { return TypeInfo.ContainsGenericParameters; }
         }
 
         /// <summary>
@@ -133,7 +146,7 @@ namespace NUnit.Framework.Internal
         /// </summary>
         public bool IsGenericTypeDefinition
         {
-            get { return Type.IsGenericTypeDefinition; }
+            get { return TypeInfo.IsGenericTypeDefinition; }
         }
 
         /// <summary>
@@ -141,7 +154,7 @@ namespace NUnit.Framework.Internal
         /// </summary>
         public bool IsSealed
         {
-            get { return Type.IsSealed; }
+            get { return TypeInfo.IsSealed; }
         }
 
         /// <summary>
@@ -149,7 +162,7 @@ namespace NUnit.Framework.Internal
         /// </summary>
         public bool IsStaticClass
         {
-            get { return Type.IsSealed && Type.IsAbstract; }
+            get { return TypeInfo.IsSealed && TypeInfo.IsAbstract; }
         }
 
         /// <summary>
@@ -200,7 +213,7 @@ namespace NUnit.Framework.Internal
         /// <returns></returns>
         public bool IsDefined<T>(bool inherit)
         {
-            return Type.IsDefined(typeof(T), inherit);
+            return TypeInfo.IsDefined(typeof(T), inherit);
         }
 
         /// <summary>

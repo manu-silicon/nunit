@@ -21,6 +21,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // ***********************************************************************
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace NUnit.Framework.Compatibility
@@ -31,6 +32,22 @@ namespace NUnit.Framework.Compatibility
     /// </summary>
     public static class AttributeHelper
     {
+#if PORTABLE
+        public static Type[] GetTypes(this Assembly assembly)
+        {
+            // TODO: How do inject the ILibraryManager for Core, but
+            // provide a default implementation for all other platforms?
+            return null;
+        }
+
+        public static object[] GetCustomAttributes(this Assembly assembly, Type attributeType, bool inherit)
+        {
+            // TODO: How do I do this?
+            return new Attribute[0];
+        }
+
+#endif
+
         /// <summary>
         /// Gets the custom attributes from the given object.
         /// </summary>

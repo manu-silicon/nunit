@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Threading;
 using NUnit.Framework.Internal.Commands;
 using NUnit.Framework.Interfaces;
+using System.Reflection;
 
 namespace NUnit.Framework.Internal.Execution
 {
@@ -326,9 +327,14 @@ namespace NUnit.Framework.Internal.Execution
 
         private static bool IsStaticClass(Type type)
         {
+#if PORTABLE
+            var info = type.GetTypeInfo();
+            return info.IsAbstract && info.IsSealed;
+#else
             return type.IsAbstract && type.IsSealed;
+#endif
         }
 
-        #endregion
+#endregion
     }
 }

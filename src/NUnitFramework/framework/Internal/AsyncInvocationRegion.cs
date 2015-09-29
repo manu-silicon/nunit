@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using NUnit.Framework.Compatibility;
 
 #if NET_4_5
 using System.Runtime.ExceptionServices;

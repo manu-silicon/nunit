@@ -45,7 +45,8 @@ namespace NUnit.Framework.Internal
 #if NETCF
             return string.Compare(strA, strB, ignoreCase);
 #else
-            return string.Compare(strA, strB, CultureInfo.CurrentCulture, options);
+            var comparison = ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture;
+            return string.Compare(strA, strB, comparison);
 #endif
         }
 
