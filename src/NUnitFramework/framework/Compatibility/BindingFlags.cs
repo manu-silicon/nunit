@@ -29,11 +29,71 @@ using System.Reflection;
 
 namespace NUnit.Framework.Compatibility
 {
+    static class PropertyInfoExtensions
+    {
+        public static MethodInfo GetGetMethod(this PropertyInfo info)
+        {
+            return info.GetMethod != null && info.GetMethod.IsPublic ? info.GetMethod : null;
+        }
+
+        public static MethodInfo GetGetMethod(this PropertyInfo info, bool nonPublic)
+        {
+            if (!nonPublic)
+                return info.GetGetMethod();
+
+            return info.GetMethod;
+        }
+    }
+
     static class TypeExtensions
     {
         public static bool IsAssignableFrom(this Type type, Type from)
         {
             return type.GetTypeInfo().IsAssignableFrom(from.GetTypeInfo());
+        }
+
+        public static IEnumerable<ConstructorInfo> GetConstructors(this Type type)
+        {
+            return type.GetTypeInfo().DeclaredConstructors;
+        }
+        
+        public static IEnumerable<Type> GetInterfaces(this Type type)
+        {
+            return type.GetTypeInfo().ImplementedInterfaces;
+        }
+
+        public static ConstructorInfo GetConstructor(this Type type, Type[] args)
+        {            
+            foreach (ConstructorInfo ctor in type.GetTypeInfo().DeclaredConstructors)
+            {
+                var prms = ctor.GetParameters();
+                if (args.Length != prms.Length)
+                    continue;
+
+                bool match = true;
+                for (int i = 0; i < args.Length; i++)
+                {
+                    if (!prms[0].ParameterType.IsAssignableFrom(args[0]))
+                    {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) return ctor;
+            }
+            return null;
+        }
+
+        public static Type[] GetGenericArguments(this Type type)
+        {
+            return type.GetTypeInfo().GenericTypeParameters;
+        }
+
+        public static IEnumerable<MemberInfo> GetMember(this Type type, string name, BindingFlags flags)
+        {
+            var comparisonType = flags.HasFlag(BindingFlags.IgnoreCase) ?
+                StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+            return GetMembers(type, flags).Where(m => m.Name.Equals(name, comparisonType));
         }
 
         public static IEnumerable<MemberInfo> GetMembers(this Type type, BindingFlags flags)
@@ -86,7 +146,7 @@ namespace NUnit.Framework.Compatibility
             return null;
         }
 
-        public static IEnumerable<MethodInfo> GetMethods(this Type type, BindingFlags flags)
+        public static MethodInfo[] GetMethods(this Type type, BindingFlags flags)
         {
             var children = !flags.HasFlag(BindingFlags.DeclaredOnly);
             var methods = GetMethods(type, children);
@@ -103,7 +163,7 @@ namespace NUnit.Framework.Compatibility
             else if (flags.HasFlag(BindingFlags.Public) && !flags.HasFlag(BindingFlags.NonPublic))
                 methods = methods.Where(m => m.IsPublic);
 
-            return methods;
+            return methods.ToArray();
         }
 
         public static IEnumerable<MethodInfo> GetMethods(this Type type, string name, BindingFlags flags)

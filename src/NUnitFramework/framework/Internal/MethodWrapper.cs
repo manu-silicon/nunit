@@ -23,6 +23,7 @@
 
 using System;
 using System.Reflection;
+using NUnit.Framework.Compatibility;
 using NUnit.Framework.Interfaces;
 
 namespace NUnit.Framework.Internal
@@ -48,7 +49,7 @@ namespace NUnit.Framework.Internal
         public MethodWrapper(Type type, string methodName)
         {
             TypeInfo = new TypeWrapper(type);
-            MethodInfo = type.GetMethod(methodName);
+            MethodInfo = type.GetMethod(methodName, BindingFlags.Default);
         }
 
         #region IMethod Implementation

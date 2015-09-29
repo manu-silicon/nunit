@@ -109,7 +109,7 @@ namespace NUnit.Framework.Internal.Execution
             else if (Test is ParameterizedMethodSuite)
                 _actions.AddRange(ActionsHelper.GetActionsFromAttributeProvider(Test.Method.MethodInfo));
             else if (Test.TypeInfo != null)
-                _actions.AddRange(ActionsHelper.GetActionsFromTypesAttributes(Test.TypeInfo.Type));
+                _actions.AddRange(ActionsHelper.GetActionsFromTypesAttributes(Test.TypeInfo));
         }
 
         #endregion

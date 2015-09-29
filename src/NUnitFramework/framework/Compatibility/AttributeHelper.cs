@@ -40,12 +40,6 @@ namespace NUnit.Framework.Compatibility
             return null;
         }
 
-        public static object[] GetCustomAttributes(this Assembly assembly, Type attributeType, bool inherit)
-        {
-            // TODO: How do I do this?
-            return new Attribute[0];
-        }
-
 #endif
 
         /// <summary>
@@ -81,7 +75,7 @@ namespace NUnit.Framework.Compatibility
             var assembly = actual as Assembly;
             if (assembly != null)
             {
-                return (Attribute[])assembly.GetCustomAttributes(attributeType, inherit);
+                return (Attribute[])assembly.GetCustomAttributes(attributeType);
             }
 
             throw new ArgumentException(string.Format("Actual value {0} must be a MemberInfo, ParameterInfo or Assembly.", actual), "actual");

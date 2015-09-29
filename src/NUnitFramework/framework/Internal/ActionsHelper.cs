@@ -63,7 +63,7 @@ namespace NUnit.Framework.Internal
             if (attributeProvider == null)
                 return new ITestAction[0];
 
-            var actions = new List<ITestAction>((ITestAction[])attributeProvider.GetCustomAttributes(typeof(ITestAction), false));
+            var actions = new List<ITestAction>((ITestAction[])attributeProvider.GetCustomAttributes(typeof(ITestAction)));
             actions.Sort(SortByTargetDescending);
 
             return actions.ToArray();
@@ -77,13 +77,13 @@ namespace NUnit.Framework.Internal
             if (attributeProvider == null)
                 return new ITestAction[0];
 
-            var actions = new List<ITestAction>((ITestAction[])attributeProvider.GetCustomAttributes(typeof(ITestAction), false));
+            var actions = new List<ITestAction>((ITestAction[])attributeProvider.GetCustomAttributes(typeof(ITestAction)));
             actions.Sort(SortByTargetDescending);
 
             return actions.ToArray();
         }
 
-        public static ITestAction[] GetActionsFromTypesAttributes(Type type)
+        public static ITestAction[] GetActionsFromTypesAttributes(ITypeInfo type)
         {
             if(type == null)
                 return new ITestAction[0];
@@ -105,7 +105,7 @@ namespace NUnit.Framework.Internal
             return actions.ToArray();
         }
 
-        private static Type[] GetDeclaredInterfaces(Type type)
+        private static Type[] GetDeclaredInterfaces(ITypeInfo type)
         {
             List<Type> interfaces = new List<Type>(type.GetInterfaces());
 
