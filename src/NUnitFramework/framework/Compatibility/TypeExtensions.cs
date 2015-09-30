@@ -108,7 +108,7 @@ namespace NUnit.Framework.Compatibility
 
         public static PropertyInfo GetProperty(this Type type, string name)
         {
-            return GetProperty(type, name, BindingFlags.Default);
+            return GetProperty(type, name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
         }
 
         public static PropertyInfo GetProperty(this Type type, string name, BindingFlags flags)
@@ -121,6 +121,11 @@ namespace NUnit.Framework.Compatibility
             return properties.Where(p => p.Name.Equals(name, comparisonType)).FirstOrDefault();
         }
 
+        public static MethodInfo GetMethod(this Type type, string name)
+        {
+            return GetMethod(type, name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+        }
+
         public static MethodInfo GetMethod(this Type type, string name, BindingFlags flags)
         {
             return GetMethods(type, name, flags).FirstOrDefault();
@@ -128,7 +133,7 @@ namespace NUnit.Framework.Compatibility
 
         public static MethodInfo GetMethod(this Type type, string name, Type[] args)
         {
-            foreach (MethodInfo method in GetMethods(type, name, BindingFlags.Default))
+            foreach (MethodInfo method in GetMethods(type, name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance))
             {
                 var prms = method.GetParameters();
                 if (args.Length != prms.Length)

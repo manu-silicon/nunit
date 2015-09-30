@@ -280,7 +280,7 @@ namespace NUnit.Framework.Constraints
 
         private static MethodInfo GetCorrectGenericEqualsMethod(Type first, Type second)
         {
-            MethodInfo[] methods = first.GetMethods(BindingFlags.Default);
+            MethodInfo[] methods = first.GetMethods();
             foreach(var method in methods)
             {
                 if(method.Name == "Equals")
