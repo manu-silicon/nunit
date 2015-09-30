@@ -103,6 +103,6 @@ namespace NUnit.Framework.Internal
             return ParameterInfo.IsDefined(typeof(T), inherit);
         }
 
-#endregion
+        #endregion
     }
 }

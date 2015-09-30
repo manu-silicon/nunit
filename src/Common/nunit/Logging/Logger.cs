@@ -172,7 +172,7 @@ namespace NUnit.Common
                 DateTime.Now.ToString(TIME_FMT),
                 level == InternalTraceLevel.Verbose ? "Debug" : level.ToString(),
 #if PORTABLE
-                "<unknown>",    // TODO: How can we supply this in portable?
+                "<unknown>",    // TODO: DNX - How can we supply this in portable?
 #else
                 System.Threading.Thread.CurrentThread.ManagedThreadId,
 #endif

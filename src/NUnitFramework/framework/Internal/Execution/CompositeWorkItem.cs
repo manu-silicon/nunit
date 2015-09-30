@@ -23,10 +23,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using NUnit.Framework.Internal.Commands;
-using NUnit.Framework.Interfaces;
 using System.Reflection;
+using System.Threading;
+using NUnit.Framework.Compatibility;
+using NUnit.Framework.Interfaces;
+using NUnit.Framework.Internal.Commands;
 
 namespace NUnit.Framework.Internal.Execution
 {
@@ -327,14 +328,9 @@ namespace NUnit.Framework.Internal.Execution
 
         private static bool IsStaticClass(Type type)
         {
-#if PORTABLE
-            var info = type.GetTypeInfo();
-            return info.IsAbstract && info.IsSealed;
-#else
-            return type.IsAbstract && type.IsSealed;
-#endif
+            return type.GetTypeInfo().IsAbstract && type.GetTypeInfo().IsSealed;
         }
 
-#endregion
+        #endregion
     }
 }

@@ -204,6 +204,6 @@ namespace NUnit.Framework.Internal
             return MethodInfo.Name;
         }
 
-#endregion
+        #endregion
     }
 }

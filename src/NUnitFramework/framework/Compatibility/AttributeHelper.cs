@@ -32,16 +32,6 @@ namespace NUnit.Framework.Compatibility
     /// </summary>
     public static class AttributeHelper
     {
-#if PORTABLE
-        public static Type[] GetTypes(this Assembly assembly)
-        {
-            // TODO: How do inject the ILibraryManager for Core, but
-            // provide a default implementation for all other platforms?
-            return null;
-        }
-
-#endif
-
         /// <summary>
         /// Gets the custom attributes from the given object.
         /// </summary>

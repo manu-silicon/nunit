@@ -28,7 +28,8 @@ namespace NUnit.Framework.Compatibility
 {
     /// <summary>
     /// Specifies flags that control binding and the way in which the search for members
-    /// and types is conducted by reflection.
+    /// and types is conducted by reflection. This version of the enum only includes
+    /// values that we are supporting in the portable framework.
     /// </summary>
     [Flags]
     public enum BindingFlags

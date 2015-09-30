@@ -41,7 +41,6 @@ namespace NUnit.Framework.Internal
         /// strB is sorted first</returns>
         public static int Compare(string strA, string strB, bool ignoreCase)
         {
-            CompareOptions options = ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None;
 #if NETCF
             return string.Compare(strA, strB, ignoreCase);
 #else
