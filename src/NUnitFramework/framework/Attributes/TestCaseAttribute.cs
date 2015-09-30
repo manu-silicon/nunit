@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using NUnit.Framework.Compatibility;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
@@ -384,7 +385,7 @@ namespace NUnit.Framework
 
                 if (convert)
                 {
-                    Type convertTo = targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(Nullable<>) ? 
+                    Type convertTo = targetType.GetTypeInfo().IsGenericType && targetType.GetGenericTypeDefinition() == typeof(Nullable<>) ? 
                         targetType.GetGenericArguments()[0] : targetType;
                     arglist[i] = Convert.ChangeType(arg, convertTo, System.Globalization.CultureInfo.InvariantCulture);
                 }

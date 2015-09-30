@@ -52,7 +52,7 @@ namespace NUnit.Framework.Internal.Builders
                 return false;
 
             Type parameterType = parameter.ParameterType;
-            if (parameterType == typeof(bool) || parameterType.IsEnum)
+            if (parameterType == typeof(bool) || parameterType.GetTypeInfo().IsEnum)
                 return true;
 
             Type containingType = method.TypeInfo.Type;
@@ -137,7 +137,7 @@ namespace NUnit.Framework.Internal.Builders
                     datapoints.Add(true);
                     datapoints.Add(false);
                 }
-                else if (parameterType.IsEnum)
+                else if (parameterType.GetTypeInfo().IsEnum)
                 {
                     foreach (object o in TypeHelper.GetEnumValues(parameterType))
                         datapoints.Add(o);
@@ -174,7 +174,7 @@ namespace NUnit.Framework.Internal.Builders
             if (type.IsArray)
                 return type.GetElementType();
 
-            if (type.IsGenericType && type.Name == "IEnumerable`1")
+            if (type.GetTypeInfo().IsGenericType && type.Name == "IEnumerable`1")
                 return type.GetGenericArguments()[0];
 
             return null;

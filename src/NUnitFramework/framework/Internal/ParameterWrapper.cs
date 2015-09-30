@@ -26,6 +26,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using NUnit.Framework.Interfaces;
 
+#if PORTABLE
+using System.Linq;
+#endif
+
 namespace NUnit.Framework.Internal
 {
     /// <summary>
@@ -84,7 +88,11 @@ namespace NUnit.Framework.Internal
         /// </summary>
         public T[] GetCustomAttributes<T>(bool inherit) where T : class
         {
+#if PORTABLE
+            return ParameterInfo.GetCustomAttributes(typeof(T), inherit).ToArray() as object[] as T[];
+#else
             return (T[])ParameterInfo.GetCustomAttributes(typeof(T), inherit);
+#endif
         }
 
         /// <summary>
@@ -95,6 +103,6 @@ namespace NUnit.Framework.Internal
             return ParameterInfo.IsDefined(typeof(T), inherit);
         }
 
-        #endregion
+#endregion
     }
 }

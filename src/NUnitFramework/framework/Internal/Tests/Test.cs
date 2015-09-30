@@ -317,7 +317,7 @@ namespace NUnit.Framework.Internal
         /// <param name="provider">An object deriving from MemberInfo</param>
         public void ApplyAttributesToTest(Assembly provider)
         {
-            foreach (IApplyToTest iApply in provider.GetCustomAttributes(typeof(IApplyToTest), true))
+            foreach (IApplyToTest iApply in provider.GetCustomAttributes(typeof(IApplyToTest)))
                 iApply.ApplyToTest(this);
         }
 #endif

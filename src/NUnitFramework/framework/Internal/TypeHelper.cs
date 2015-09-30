@@ -61,7 +61,7 @@ namespace NUnit.Framework.Internal
             if (type.IsGenericParameter)
                 return type.Name;
 
-            if (type.IsGenericType)
+            if (type.GetTypeInfo().IsGenericType)
             {
                 string name = type.FullName;
                 int index = name.IndexOf('[');

@@ -50,7 +50,7 @@ namespace NUnit.Framework.Internal
 
             foreach (ITestAction action in GetFilteredAndSortedActions(actions, phase))
             {
-                if(phase == ActionPhase.Before)
+                if (phase == ActionPhase.Before)
                     action.BeforeTest(test);
                 else
                     action.AfterTest(test);
@@ -77,42 +77,42 @@ namespace NUnit.Framework.Internal
             if (attributeProvider == null)
                 return new ITestAction[0];
 
-            var actions = new List<ITestAction>((ITestAction[])attributeProvider.GetCustomAttributes(typeof(ITestAction)));
+            var actions = new List<ITestAction>((ITestAction[])attributeProvider.GetCustomAttributes(typeof(ITestAction), false));
             actions.Sort(SortByTargetDescending);
 
             return actions.ToArray();
         }
 
-        public static ITestAction[] GetActionsFromTypesAttributes(ITypeInfo type)
+        public static ITestAction[] GetActionsFromTypesAttributes(Type type)
         {
-            if(type == null)
+            if (type == null)
                 return new ITestAction[0];
 
-            if(type == typeof(object))
+            if (type == typeof(object))
                 return new ITestAction[0];
 
             var actions = new List<ITestAction>();
 
-            actions.AddRange(GetActionsFromTypesAttributes(type.BaseType));
+            actions.AddRange(GetActionsFromTypesAttributes(type.GetTypeInfo().BaseType));
 
             Type[] declaredInterfaces = GetDeclaredInterfaces(type);
 
-            foreach(Type interfaceType in declaredInterfaces)
-                actions.AddRange(GetActionsFromAttributeProvider(interfaceType));
+            foreach (Type interfaceType in declaredInterfaces)
+                actions.AddRange(GetActionsFromAttributeProvider(interfaceType.GetTypeInfo()));
 
-            actions.AddRange(GetActionsFromAttributeProvider(type));
+            actions.AddRange(GetActionsFromAttributeProvider(type.GetTypeInfo()));
 
             return actions.ToArray();
         }
 
-        private static Type[] GetDeclaredInterfaces(ITypeInfo type)
+        private static Type[] GetDeclaredInterfaces(Type type)
         {
             List<Type> interfaces = new List<Type>(type.GetInterfaces());
 
-            if (type.BaseType == typeof(object))
+            if (type.GetTypeInfo().BaseType == typeof(object))
                 return interfaces.ToArray();
 
-            List<Type> baseInterfaces = new List<Type>(type.BaseType.GetInterfaces());
+            List<Type> baseInterfaces = new List<Type>(type.GetTypeInfo().BaseType.GetInterfaces());
             List<Type> declaredInterfaces = new List<Type>();
 
             foreach (Type interfaceType in interfaces)
@@ -133,7 +133,7 @@ namespace NUnit.Framework.Internal
                     filteredActions.Add(actionItem);
             }
 
-            if(phase == ActionPhase.After)
+            if (phase == ActionPhase.After)
                 filteredActions.Reverse();
 
             return filteredActions.ToArray();

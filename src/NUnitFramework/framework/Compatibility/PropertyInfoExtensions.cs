@@ -1,5 +1,5 @@
-// ***********************************************************************
-// Copyright (c) 2007 Charlie Poole
+﻿// ***********************************************************************
+// Copyright (c) 2015 Charlie Poole
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -21,36 +21,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // ***********************************************************************
 
-using System;
+#if PORTABLE
 using System.Reflection;
-using NUnit.Framework.Compatibility;
 
-namespace NUnit.Framework.Constraints
+namespace NUnit.Framework.Compatibility
 {
-    /// <summary>
-    /// InstanceOfTypeConstraint is used to test that an object
-    /// is of the same type provided or derived from it.
-    /// </summary>
-    public class InstanceOfTypeConstraint : TypeConstraint
+    static class PropertyInfoExtensions
     {
-        /// <summary>
-        /// Construct an InstanceOfTypeConstraint for the type provided
-        /// </summary>
-        /// <param name="type">The expected Type</param>
-        public InstanceOfTypeConstraint(Type type)
-            : base(type, "instance of ")
+        public static MethodInfo GetGetMethod(this PropertyInfo info)
         {
-            this.DisplayName = "InstanceOf";
+            return info.GetMethod != null && info.GetMethod.IsPublic ? info.GetMethod : null;
         }
 
-        /// <summary>
-        /// Apply the constraint to an actual value, returning true if it succeeds
-        /// </summary>
-        /// <param name="actual">The actual argument</param>
-        /// <returns>True if the constraint succeeds, otherwise false.</returns>
-        protected override bool Matches(object actual)
+        public static MethodInfo GetGetMethod(this PropertyInfo info, bool nonPublic)
         {
-            return actual != null && expectedType.IsInstanceOfType(actual);
+            if (!nonPublic)
+                return info.GetGetMethod();
+
+            return info.GetMethod;
         }
     }
 }
+#endif
