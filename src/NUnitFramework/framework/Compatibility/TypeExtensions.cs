@@ -41,29 +41,74 @@ namespace System.Runtime.CompilerServices
 
 namespace NUnit.Framework.Compatibility
 {
-    static class TypeExtensions
+    /// <summary>
+    /// Provides extensions on Type that are not available
+    /// in our portable class library
+    /// </summary>
+    public static class TypeExtensions
     {
 #if PORTABLE
+        /// <summary>
+        /// Is type assignable from another type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="from"></param>
+        /// <returns></returns>
         public static bool IsAssignableFrom(this Type type, Type from)
         {
             return type.GetTypeInfo().IsAssignableFrom(from.GetTypeInfo());
         }
 
+        /// <summary>
+        /// Is object an instance of type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="instance"></param>
+        /// <returns></returns>
         public static bool IsInstanceOfType(this Type type, object instance)
         {
             return instance == null ? false : instance.GetType() == type;
         }
 
+        /// <summary>
+        /// Get the constructors for a type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static IEnumerable<ConstructorInfo> GetConstructors(this Type type)
         {
             return type.GetTypeInfo().DeclaredConstructors;
         }
 
+        /// <summary>
+        /// Gets the field with the given name
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static IEnumerable<FieldInfo> GetField(this Type type, string name)
+        {
+            return from field in GetFieldsImpl(type, true)
+                   where field.Name == name && field.IsPublic == true
+                   select field;
+        }
+
+        /// <summary>
+        /// Get the interfaces for a type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static IEnumerable<Type> GetInterfaces(this Type type)
         {
             return type.GetTypeInfo().ImplementedInterfaces;
         }
 
+        /// <summary>
+        /// Get a constructor for the type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public static ConstructorInfo GetConstructor(this Type type, Type[] args)
         {
             foreach (ConstructorInfo ctor in type.GetTypeInfo().DeclaredConstructors)
@@ -86,11 +131,23 @@ namespace NUnit.Framework.Compatibility
             return null;
         }
 
+        /// <summary>
+        /// Get the generic arguments for a type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static Type[] GetGenericArguments(this Type type)
         {
             return type.GetTypeInfo().GenericTypeParameters;
         }
 
+        /// <summary>
+        /// Get the members of a type by name
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        /// <param name="flags"></param>
+        /// <returns></returns>
         public static MemberInfo[] GetMember(this Type type, string name, BindingFlags flags)
         {
             var comparisonType = flags.HasFlag(BindingFlags.IgnoreCase) ?
@@ -98,39 +155,78 @@ namespace NUnit.Framework.Compatibility
             return GetMembers(type, flags).Where(m => m.Name.Equals(name, comparisonType)).ToArray();
         }
 
+        /// <summary>
+        /// Get the members of a type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="flags"></param>
+        /// <returns></returns>
         public static IEnumerable<MemberInfo> GetMembers(this Type type, BindingFlags flags)
         {
             var children = !flags.HasFlag(BindingFlags.DeclaredOnly);
-            var members = GetMembers(type, children);
+            var members = GetMembersImpl(type, children);
 
             return members;
         }
 
+        /// <summary>
+        /// Get a property of a type by name
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static PropertyInfo GetProperty(this Type type, string name)
         {
             return GetProperty(type, name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
         }
 
+        /// <summary>
+        /// Get a property of a type by name
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        /// <param name="flags"></param>
+        /// <returns></returns>
         public static PropertyInfo GetProperty(this Type type, string name, BindingFlags flags)
         {
             var comparisonType = flags.HasFlag(BindingFlags.IgnoreCase) ?
                 StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
             var children = !flags.HasFlag(BindingFlags.DeclaredOnly);
-            var properties = GetProperties(type, children);
+            var properties = GetPropertiesImpl(type, children);
 
             return properties.Where(p => p.Name.Equals(name, comparisonType)).FirstOrDefault();
         }
 
+        /// <summary>
+        /// Get a method of a type by name
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static MethodInfo GetMethod(this Type type, string name)
         {
             return GetMethod(type, name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
         }
 
+        /// <summary>
+        /// Get a method of a type by name
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        /// <param name="flags"></param>
+        /// <returns></returns>
         public static MethodInfo GetMethod(this Type type, string name, BindingFlags flags)
         {
             return GetMethods(type, name, flags).FirstOrDefault();
         }
 
+        /// <summary>
+        /// Get a method of a type by name with specified arguments
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public static MethodInfo GetMethod(this Type type, string name, Type[] args)
         {
             foreach (MethodInfo method in GetMethods(type, name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance))
@@ -153,10 +249,26 @@ namespace NUnit.Framework.Compatibility
             return null;
         }
 
+        /// <summary>
+        /// Get methods on a type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static MethodInfo[] GetMethods(this Type type)
+        {
+            return GetMethodsImpl(type, true).ToArray();
+        }
+
+        /// <summary>
+        /// Get methods on a type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="flags"></param>
+        /// <returns></returns>
         public static MethodInfo[] GetMethods(this Type type, BindingFlags flags)
         {
             var children = !flags.HasFlag(BindingFlags.DeclaredOnly);
-            var methods = GetMethods(type, children);
+            var methods = GetMethodsImpl(type, children);
 
             // Instance/Static
             if (flags.HasFlag(BindingFlags.Instance) && !flags.HasFlag(BindingFlags.Static))
@@ -173,6 +285,13 @@ namespace NUnit.Framework.Compatibility
             return methods.ToArray();
         }
 
+        /// <summary>
+        /// Get methods on a type by name
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        /// <param name="flags"></param>
+        /// <returns></returns>
         public static IEnumerable<MethodInfo> GetMethods(this Type type, string name, BindingFlags flags)
         {
             var comparisonType = flags.HasFlag(BindingFlags.IgnoreCase) ?
@@ -181,33 +300,44 @@ namespace NUnit.Framework.Compatibility
             return GetMethods(type, flags).Where(m => m.Name.Equals(name, comparisonType));
         }
 
-        static IEnumerable<MemberInfo> GetMembers(Type type, bool children)
+        private static IEnumerable<FieldInfo> GetFieldsImpl(Type type, bool children)
         {
             var info = type.GetTypeInfo();
             if (info.BaseType != null && children)
-                foreach (var members in GetMembers(info.BaseType, children))
+                foreach (var members in GetFieldsImpl(info.BaseType, children))
+                    yield return members;
+
+            foreach (var members in info.DeclaredFields)
+                yield return members;
+        }
+
+        private static IEnumerable<MemberInfo> GetMembersImpl(Type type, bool children)
+        {
+            var info = type.GetTypeInfo();
+            if (info.BaseType != null && children)
+                foreach (var members in GetMembersImpl(info.BaseType, children))
                     yield return members;
 
             foreach (var members in info.DeclaredMembers)
                 yield return members;
         }
 
-        static IEnumerable<PropertyInfo> GetProperties(Type type, bool children)
+        private static IEnumerable<PropertyInfo> GetPropertiesImpl(Type type, bool children)
         {
             var info = type.GetTypeInfo();
             if (info.BaseType != null && children)
-                foreach (var property in GetProperties(info.BaseType, children))
+                foreach (var property in GetPropertiesImpl(info.BaseType, children))
                     yield return property;
 
             foreach (var property in info.DeclaredProperties)
                 yield return property;
         }
 
-        static IEnumerable<MethodInfo> GetMethods(Type type, bool children)
+        private static IEnumerable<MethodInfo> GetMethodsImpl(Type type, bool children)
         {
             var info = type.GetTypeInfo();
             if (info.BaseType != null && children)
-                foreach (var method in GetMethods(info.BaseType, children))
+                foreach (var method in GetMethodsImpl(info.BaseType, children))
                     yield return method;
 
             foreach (var method in info.DeclaredMethods)

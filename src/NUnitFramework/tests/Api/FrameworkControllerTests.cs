@@ -25,7 +25,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Web.UI;
+using NUnit.Framework.Compatibility;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using NUnit.Tests.Assemblies;
@@ -40,7 +42,7 @@ namespace NUnit.Framework.Api
         private const string MISSING_FILE = "junk.dll";
         private const string EMPTY_FILTER = "<filter/>";
 
-        private static readonly string MOCK_ASSEMBLY_NAME = typeof(MockAssembly).Assembly.FullName;
+        private static readonly string MOCK_ASSEMBLY_NAME = typeof(MockAssembly).GetTypeInfo().Assembly.FullName;
 #if SILVERLIGHT || PORTABLE
         private static readonly string EXPECTED_NAME = MOCK_ASSEMBLY_NAME;
 #else
@@ -97,7 +99,7 @@ namespace NUnit.Framework.Api
         [Test]
         public void LoadTestsAction_Assembly_ReturnsRunnableSuite()
         {
-            _controller = new FrameworkController(typeof(MockAssembly).Assembly, "ID", _settings);
+            _controller = new FrameworkController(typeof(MockAssembly).GetTypeInfo().Assembly, "ID", _settings);
             new FrameworkController.LoadTestsAction(_controller, _handler);
             var result = TNode.FromXml(_handler.GetCallbackResult());
 

@@ -49,9 +49,13 @@ namespace NUnit.Framework.Constraints
         {
             get
             {
+#if PORTABLE
+                return "value matching lambda expression";
+#else
                 return predicate.Method.Name.StartsWith("<")
                     ? "value matching lambda expression"
                     : "value matching " + predicate.Method.Name;
+#endif
             }
         }
 

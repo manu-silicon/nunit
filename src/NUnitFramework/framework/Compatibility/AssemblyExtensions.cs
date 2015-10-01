@@ -27,11 +27,20 @@ using System.Reflection;
 
 namespace NUnit.Framework.Compatibility
 {
+    /// <summary>
+    /// Provides extensions on Assembly that are not available
+    /// in our portable class library
+    /// </summary>
     public static class AssemblyExtensions
     {
+        /// <summary>
+        /// Gets all the types in an assembly
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
         public static Type[] GetTypes(this Assembly assembly)
         {
-            // TODO: DNX - How do inject the ILibraryManager for Core, but
+            // TODO: DNX - How do we inject the ILibraryManager for Core, but
             // provide a default implementation for all other platforms?
             return null;
         }

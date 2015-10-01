@@ -27,6 +27,7 @@ using System.Threading;
 using System.Globalization;
 using NUnit.Common;
 using NUnit.Framework;
+using NUnit.Framework.Compatibility;
 #if !NETCF
 using System.Security.Principal;
 #endif
@@ -91,7 +92,7 @@ namespace NUnit.Framework.Internal
         [TearDown]
         public void Cleanup()
         {
-#if !NETCF
+#if !NETCF && !PORTABLE
             Thread.CurrentThread.CurrentCulture = originalCulture;
             Thread.CurrentThread.CurrentUICulture = originalUICulture;
 #endif

@@ -110,6 +110,19 @@ namespace NUnit.Common
 
         #region Load
 
+#if PORTABLE
+        /// <summary>
+        /// Loads an assembly given a string, which is the AssemblyName
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static Assembly Load(string name)
+        {
+            // TODO: DNX - How do we load an assembly based on a filename?
+            var asmName = new AssemblyName(name);
+            return Assembly.Load(asmName);
+        }
+#else
         /// <summary>
         /// Loads an assembly given a string, which may be the 
         /// path to the assembly or the AssemblyName
@@ -136,7 +149,7 @@ namespace NUnit.Common
             // Assume it's the string representation of an AssemblyName
             return Assembly.Load(nameOrPath);
         }
-
+#endif
         #endregion
 
         #region Helper Methods

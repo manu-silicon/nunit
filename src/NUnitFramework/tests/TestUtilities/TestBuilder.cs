@@ -24,6 +24,7 @@
 using System;
 using System.Reflection;
 using NUnit.Framework;
+using NUnit.Framework.Compatibility;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal.Builders;
 using NUnit.Framework.Internal;
@@ -125,7 +126,7 @@ namespace NUnit.TestUtilities
 #if !PORTABLE
                 Thread.Sleep(1);
 #else
-                System.Threading.Tasks.TaskEx.Delay(1);
+                System.Threading.Tasks.Task.Delay(1);
 #endif
             }
 
@@ -191,7 +192,7 @@ namespace NUnit.TestUtilities
 #if !PORTABLE
                 Thread.Sleep(1);
 #else
-                System.Threading.Tasks.TaskEx.Delay(1);
+                System.Threading.Tasks.Task.Delay(1);
 #endif
             }
 
@@ -202,7 +203,7 @@ namespace NUnit.TestUtilities
 
         private static bool IsStaticClass(Type type)
         {
-            return type.IsAbstract && type.IsSealed;
+            return type.GetTypeInfo().IsAbstract && type.GetTypeInfo().IsSealed;
         }
 
         private TestBuilder() { }
