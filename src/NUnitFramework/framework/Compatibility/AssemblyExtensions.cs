@@ -23,6 +23,7 @@
 
 #if PORTABLE
 using System;
+using System.Linq;
 using System.Reflection;
 
 namespace NUnit.Framework.Compatibility
@@ -40,9 +41,7 @@ namespace NUnit.Framework.Compatibility
         /// <returns></returns>
         public static Type[] GetTypes(this Assembly assembly)
         {
-            // TODO: DNX - How do we inject the ILibraryManager for Core, but
-            // provide a default implementation for all other platforms?
-            return null;
+            return assembly.DefinedTypes.Select(t => t.AsType()).ToArray();
         }
     }
 }

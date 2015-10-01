@@ -232,7 +232,8 @@ namespace NUnit.Framework.Internal
             {
                 object arg = arglist[i];
 
-                /* TODO: DNX - IConvertible is not found                
+#if !PORTABLE
+                // TODO: DNX - IConvertible is not found                
                 if (arg != null && arg is IConvertible)
                 {
                     Type argType = arg.GetType();
@@ -258,7 +259,7 @@ namespace NUnit.Framework.Internal
                         arglist[i] = Convert.ChangeType(arg, targetType,
                             System.Globalization.CultureInfo.InvariantCulture);
                 }
-                */
+#endif
             }
         }
 

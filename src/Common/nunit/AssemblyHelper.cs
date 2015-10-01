@@ -118,8 +118,8 @@ namespace NUnit.Common
         /// <returns></returns>
         public static Assembly Load(string name)
         {
-            // TODO: DNX - How do we load an assembly based on a filename?
-            var asmName = new AssemblyName(name);
+            // TODO: DNX - How do we load an assembly based on a filename? Test if this works.
+            var asmName = new AssemblyName { Name = Path.GetFileNameWithoutExtension(name) };
             return Assembly.Load(asmName);
         }
 #else

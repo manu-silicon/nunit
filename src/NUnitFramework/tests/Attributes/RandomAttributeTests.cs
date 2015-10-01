@@ -29,6 +29,11 @@ using NUnit.Framework.Interfaces;
 using NUnit.TestData.RandomAttributeTests;
 using NUnit.TestUtilities;
 
+#if PORTABLE
+using System.Linq;
+using System.Reflection;
+#endif
+
 namespace NUnit.Framework.Attributes
 {
     public class RandomAttributeTests
@@ -66,4 +71,14 @@ namespace NUnit.Framework.Attributes
             }
         }
     }
+
+#if PORTABLE
+    static class MethodInfoExtensions
+    {
+        public static bool IsDefined(this MethodInfo method, Type attributeType, bool inherit)
+        {
+            return method.GetCustomAttribute(attributeType, inherit) != null;
+        }
+    }
+#endif
 }
