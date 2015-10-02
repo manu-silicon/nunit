@@ -131,7 +131,7 @@ namespace NUnit.Common
         /// <returns></returns>
         public static Assembly Load(string nameOrPath)
         {
-#if !SILVERLIGHT && !PORTABLE
+#if !SILVERLIGHT
             var ext = Path.GetExtension(nameOrPath).ToLower();
 
             // It's a path to an assembly, get the AssemblyName and load it

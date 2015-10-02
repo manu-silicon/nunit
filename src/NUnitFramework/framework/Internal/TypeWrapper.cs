@@ -195,7 +195,7 @@ namespace NUnit.Framework.Internal
         public T[] GetCustomAttributes<T>(bool inherit) where T : class
         {
 #if PORTABLE
-            return Type.GetTypeInfo().GetCustomAttributes(typeof(T), inherit).ToArray() as object[] as T[];
+            return Type.GetTypeInfo().GetAttributes<T>(inherit).ToArray();
 #else
             return (T[])Type.GetCustomAttributes(typeof(T), inherit);
 #endif
@@ -209,7 +209,11 @@ namespace NUnit.Framework.Internal
         /// <returns></returns>
         public bool IsDefined<T>(bool inherit)
         {
+#if PORTABLE
+            return Type.GetTypeInfo().GetCustomAttributes(inherit).Any(a => typeof(T).IsAssignableFrom(a.GetType()));
+#else
             return Type.GetTypeInfo().IsDefined(typeof(T), inherit);
+#endif
         }
 
         /// <summary>

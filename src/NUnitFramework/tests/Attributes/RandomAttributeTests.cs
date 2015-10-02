@@ -77,7 +77,7 @@ namespace NUnit.Framework.Attributes
     {
         public static bool IsDefined(this MethodInfo method, Type attributeType, bool inherit)
         {
-            return method.GetCustomAttribute(attributeType, inherit) != null;
+            return method.GetCustomAttributes(inherit).Any(a => attributeType.IsAssignableFrom(a.GetType()));
         }
     }
 #endif

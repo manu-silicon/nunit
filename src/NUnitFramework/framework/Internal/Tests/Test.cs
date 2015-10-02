@@ -26,6 +26,10 @@ using System.Reflection;
 using NUnit.Framework.Compatibility;
 using NUnit.Framework.Interfaces;
 
+#if PORTABLE
+using System.Linq;
+#endif
+
 namespace NUnit.Framework.Internal
 {
     /// <summary>
@@ -290,23 +294,11 @@ namespace NUnit.Framework.Internal
         /// </summary>
         /// <param name="provider">An object deriving from MemberInfo</param>
         public void ApplyAttributesToTest(MemberInfo provider)
-#else
-        /// <summary>
-        /// Modify a newly constructed test by applying any of NUnit's common
-        /// attributes, based on a supplied ICustomAttributeProvider, which is
-        /// usually the reflection element from which the test was constructed,
-        /// but may not be in some instances. The attributes retrieved are 
-        /// saved for use in subsequent operations.
-        /// </summary>
-        /// <param name="provider">An object implementing ICustomAttributeProvider</param>
-        public void ApplyAttributesToTest(ICustomAttributeProvider provider)
-#endif
         {
-            foreach (IApplyToTest iApply in provider.GetCustomAttributes(typeof(IApplyToTest), true))
+            foreach (IApplyToTest iApply in provider.GetAttributes<IApplyToTest>(true))
                 iApply.ApplyToTest(this);
         }
 
-#if PORTABLE
         /// <summary>
         /// Modify a newly constructed test by applying any of NUnit's common
         /// attributes, based on a supplied ICustomAttributeProvider, which is
@@ -317,7 +309,21 @@ namespace NUnit.Framework.Internal
         /// <param name="provider">An object deriving from MemberInfo</param>
         public void ApplyAttributesToTest(Assembly provider)
         {
-            foreach (IApplyToTest iApply in provider.GetCustomAttributes(typeof(IApplyToTest)))
+            foreach (IApplyToTest iApply in provider.GetAttributes<IApplyToTest>())
+                iApply.ApplyToTest(this);
+        }
+#else
+        /// <summary>
+        /// Modify a newly constructed test by applying any of NUnit's common
+        /// attributes, based on a supplied ICustomAttributeProvider, which is
+        /// usually the reflection element from which the test was constructed,
+        /// but may not be in some instances. The attributes retrieved are 
+        /// saved for use in subsequent operations.
+        /// </summary>
+        /// <param name="provider">An object implementing ICustomAttributeProvider</param>
+        public void ApplyAttributesToTest(ICustomAttributeProvider provider)
+        {
+            foreach (IApplyToTest iApply in provider.GetCustomAttributes(typeof(IApplyToTest), true))
                 iApply.ApplyToTest(this);
         }
 #endif

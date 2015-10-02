@@ -27,6 +27,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using NUnit.Framework.Compatibility;
 
+#if PORTABLE
+using System.Linq;
+#endif
+
 namespace NUnit.Framework.Internal
 {
     /// <summary>
@@ -119,15 +123,17 @@ namespace NUnit.Framework.Internal
 #if NETCF
             if (fixtureType.ContainsGenericParameters)
                 return false;
-#endif
-
+#elif PORTABLE
+            return fixtureType.GetMethods(AllMembers | BindingFlags.FlattenHierarchy)
+                .Any(m => m.GetCustomAttributes(false).Any(a => attributeType.IsAssignableFrom(a.GetType())));
+#else
             foreach (MethodInfo method in fixtureType.GetMethods(AllMembers | BindingFlags.FlattenHierarchy))
             {
                 if (method.IsDefined(attributeType, false))
                     return true;
             }
-
             return false;
+#endif
         }
 
         #endregion

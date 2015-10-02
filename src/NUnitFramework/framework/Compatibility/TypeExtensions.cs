@@ -41,6 +41,52 @@ namespace System.Runtime.CompilerServices
 
 namespace NUnit.Framework.Compatibility
 {
+#if PORTABLE
+    /// <summary>
+    /// Provides NUnit specific extensions to the
+    /// MemberInfo class
+    /// </summary>
+    public static class ReflectionExtensions
+    {
+        /// <summary>
+        /// Returns an array of custom attributes of the specified type applied to this member
+        /// </summary>
+        /// <remarks> Portable throws an argument exception if T does not
+        /// derive from Attribute. NUnit uses interfaces to find attributes, thus
+        /// this method</remarks>
+        public static IEnumerable<T> GetAttributes<T>(this MemberInfo info, bool inherit) where T : class
+        {
+            return GetAttributesImpl<T>(info.GetCustomAttributes(inherit));
+        }
+
+        /// <summary>
+        /// Returns an array of custom attributes of the specified type applied to this parameter
+        /// </summary>
+        public static IEnumerable<T> GetAttributes<T>(this ParameterInfo info, bool inherit) where T : class
+        {
+            return GetAttributesImpl<T>(info.GetCustomAttributes(inherit));
+        }
+
+        /// <summary>
+        /// Returns an array of custom attributes of the specified type applied to this assembly
+        /// </summary>
+        public static IEnumerable<T> GetAttributes<T>(this Assembly info) where T : class
+        {
+            return GetAttributesImpl<T>(info.GetCustomAttributes());
+        }
+
+        private static IEnumerable<T> GetAttributesImpl<T>(IEnumerable<Attribute> attributes) where T : class
+        {
+            var attrs = new List<T>();
+
+            attributes.Where(a => typeof(T).IsAssignableFrom(a.GetType()))
+                .All(a => { attrs.Add(a as T); return true; });
+
+            return attrs;
+        }
+    }
+#endif
+
     /// <summary>
     /// Provides extensions on Type that are not available
     /// in our portable class library
@@ -111,24 +157,10 @@ namespace NUnit.Framework.Compatibility
         /// <returns></returns>
         public static ConstructorInfo GetConstructor(this Type type, Type[] args)
         {
-            foreach (ConstructorInfo ctor in type.GetTypeInfo().DeclaredConstructors)
-            {
-                var prms = ctor.GetParameters();
-                if (args.Length != prms.Length)
-                    continue;
-
-                bool match = true;
-                for (int i = 0; i < args.Length; i++)
-                {
-                    if (!prms[0].ParameterType.IsAssignableFrom(args[0]))
-                    {
-                        match = false;
-                        break;
-                    }
-                }
-                if (match) return ctor;
-            }
-            return null;
+            return type.GetTypeInfo()
+                .DeclaredConstructors
+                .Where(ctor => ParametersMatch(ctor.GetParameters(), args))
+                .FirstOrDefault();
         }
 
         /// <summary>
@@ -138,7 +170,7 @@ namespace NUnit.Framework.Compatibility
         /// <returns></returns>
         public static Type[] GetGenericArguments(this Type type)
         {
-            return type.GetTypeInfo().GenericTypeParameters;
+            return type.GetTypeInfo().GenericTypeArguments;
         }
 
         /// <summary>
@@ -229,24 +261,26 @@ namespace NUnit.Framework.Compatibility
         /// <returns></returns>
         public static MethodInfo GetMethod(this Type type, string name, Type[] args)
         {
-            foreach (MethodInfo method in GetMethods(type, name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance))
-            {
-                var prms = method.GetParameters();
-                if (args.Length != prms.Length)
-                    continue;
+            return GetMethods(type, name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance)
+                .Where(method => ParametersMatch(method.GetParameters(), args))
+                .FirstOrDefault();
+        }
 
-                bool match = true;
-                for (int i = 0; i < args.Length; i++)
+        private static bool ParametersMatch(ParameterInfo[] prms, Type[] args)
+        {
+            if (args.Length != prms.Length)
+                return false;
+
+            bool match = true;
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (prms[i].ParameterType == args[i])
                 {
-                    if (!prms[0].ParameterType.IsAssignableFrom(args[0]))
-                    {
-                        match = false;
-                        break;
-                    }
+                    match = false;
+                    break;
                 }
-                if (match) return method;
             }
-            return null;
+            return match;
         }
 
         /// <summary>

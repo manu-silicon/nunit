@@ -25,6 +25,7 @@ using System;
 using System.Reflection;
 using NUnit.Framework.Compatibility;
 using NUnit.Framework.Interfaces;
+using System.Collections.Generic;
 
 #if PORTABLE
 using System.Linq;
@@ -171,7 +172,7 @@ namespace NUnit.Framework.Internal
         public T[] GetCustomAttributes<T>(bool inherit) where T : class
         {
 #if PORTABLE
-            return MethodInfo.GetCustomAttributes(typeof(T), inherit).ToArray() as object[] as T[];
+            return MethodInfo.GetAttributes<T>(inherit).ToArray();
 #else
             return (T[])MethodInfo.GetCustomAttributes(typeof(T), inherit);
 #endif
@@ -182,7 +183,11 @@ namespace NUnit.Framework.Internal
         /// </summary>
         public bool IsDefined<T>(bool inherit)
         {
+#if PORTABLE
+            return MethodInfo.GetCustomAttributes(inherit).Any(a => typeof(T).IsAssignableFrom(a.GetType()));
+#else
             return MethodInfo.IsDefined(typeof(T), inherit);
+#endif
         }
 
         /// <summary>

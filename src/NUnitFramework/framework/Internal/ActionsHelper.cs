@@ -27,6 +27,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using NUnit.Framework.Compatibility;
 
+#if PORTABLE
+using System.Linq;
+#endif
+
 namespace NUnit.Framework.Internal
 {
     using Interfaces;
@@ -63,16 +67,24 @@ namespace NUnit.Framework.Internal
             if (attributeProvider == null)
                 return new ITestAction[0];
 
-            var actions = new List<ITestAction>((ITestAction[])attributeProvider.GetCustomAttributes(typeof(ITestAction)));
+            var actions = attributeProvider.GetAttributes<ITestAction>().ToList();
             actions.Sort(SortByTargetDescending);
 
             return actions.ToArray();
         }
 
         public static ITestAction[] GetActionsFromAttributeProvider(MemberInfo attributeProvider)
+        {
+            if (attributeProvider == null)
+                return new ITestAction[0];
+
+            var actions = attributeProvider.GetAttributes<ITestAction>(false).ToList();
+            actions.Sort(SortByTargetDescending);
+
+            return actions.ToArray();
+        }
 #else
         public static ITestAction[] GetActionsFromAttributeProvider(ICustomAttributeProvider attributeProvider)
-#endif
         {
             if (attributeProvider == null)
                 return new ITestAction[0];
@@ -82,6 +94,7 @@ namespace NUnit.Framework.Internal
 
             return actions.ToArray();
         }
+#endif
 
         public static ITestAction[] GetActionsFromTypesAttributes(Type type)
         {
